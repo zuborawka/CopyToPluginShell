@@ -31,7 +31,7 @@ This is a Cake Shell class to copy the files for plugin from the baked files.
 
 プラグインのコンソールなので次のようなコマンドになります。
 
-$Console/cake CopyToPlugin.CopyToPlugin
+$Console/cake CopyToPluginShell.CopyToPlugin
 
 パラメータは次のようなものがあります。
 
