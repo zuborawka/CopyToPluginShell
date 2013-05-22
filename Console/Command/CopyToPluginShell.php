@@ -60,20 +60,20 @@ class CopyToPluginShell extends AppShell
 		);
 
 		$this->singularName =
-			Inflector::camelize($this->getMatchedArg('Model Name (singular)', '/^[a-zA-Z][_ a-zA-Z0-9]*$/'));
+			Inflector::camelize($this->_getMatchedArg('Model Name (singular)', '/^[a-zA-Z][_ a-zA-Z0-9]*$/'));
 		$this->pluralName =
 			Inflector::pluralize($this->singularName);
 		$this->pluginName =
-			Inflector::camelize($this->getMatchedArg('Plugin Name', '/^[a-zA-Z][_ a-zA-Z0-9]*$/'));
+			Inflector::camelize($this->_getMatchedArg('Plugin Name', '/^[a-zA-Z][_ a-zA-Z0-9]*$/'));
 		$this->toCore =
-			strtoupper($this->getMatchedArg('To Core ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'N')) === 'Y';
+			strtoupper($this->_getMatchedArg('To Core ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'N')) === 'Y';
 		$this->override =
-			strtoupper($this->getMatchedArg('Override If Exists ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'N')) === 'Y';
+			strtoupper($this->_getMatchedArg('Override If Exists ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'N')) === 'Y';
 		$this->remove =
-			strtoupper($this->getMatchedArg('Remove Original ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'Y')) === 'Y';
+			strtoupper($this->_getMatchedArg('Remove Original ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'Y')) === 'Y';
 		if ($this->remove) {
 			$this->backup =
-				strtoupper($this->getMatchedArg('Create Backup ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'Y')) === 'Y';
+				strtoupper($this->_getMatchedArg('Create Backup ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'Y')) === 'Y';
 		}
 
 		$this->out(sprintf("\n" . 'Check Your Configurations' . "\n" .
@@ -107,13 +107,13 @@ class CopyToPluginShell extends AppShell
 		}
 
 		foreach ($this->paths as $type => $path) {
-			$this->setTarget($type, $path);
+			$this->_setTarget($type, $path);
 		}
 
-		$this->move();
+		$this->_move();
 	}
 
-	protected function getMatchedArg($title, $pattern, $options = null, $defaults = null)
+	public function _getMatchedArg($title, $pattern, $options = null, $defaults = null)
 	{
 		do {
 			$arg = $this->in($title . ' :', $options, $defaults);
@@ -125,7 +125,7 @@ class CopyToPluginShell extends AppShell
 		return $arg;
 	}
 
-	protected function setTarget($type, $path)
+	public function _setTarget($type, $path)
 	{
 		$pluginDir = $this->pluginDir . $this->pluginName . DS;
 
@@ -204,7 +204,7 @@ class CopyToPluginShell extends AppShell
 		}
 	}
 
-	protected function move()
+	public function _move()
 	{
 		foreach ($this->targetFiles as $k => $settings) {
 			$this->out("\n[" . $k . ']');
