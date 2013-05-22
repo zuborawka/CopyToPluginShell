@@ -11,7 +11,7 @@
  *
  * 使い方
  * 		1 : Console/cake bake all などで、普通にファイルを bake する
- *		2 : Console/cake CopyToPlugin.CopyToPlugin でこのシェルを呼び出す
+ *		2 : Console/cake CopyToPluginShell.CopyToPlugin でこのシェルを呼び出す
  *		3 : パラメータを色々聞いてくるので適当に入力して下さい。以上
  */
 
