@@ -3,6 +3,7 @@ CopyToPlugin
 
 This is a Cake Shell class to copy the files for plugin from the baked files on CakePHP framework.
 
+http://blog.xao.jp/blog/cakephp/plugin-to-copy-files-into-plugins-directory/
 
 CakePHP でプラグインを作成するときに、アプリケーションでベイクしたファイル群を丸ごとコピーする、
 そんなシェルです。
