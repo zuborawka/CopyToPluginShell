@@ -189,7 +189,7 @@ class CopyToPluginShell extends AppShell
 				);
 				break;
 			case 'TestFixture':
-				$this->targetFiles['TestModel'] = array(
+				$this->targetFiles['TestFixture'] = array(
 					'src' => $path . $this->singularName . 'Fixture.php',
 					'create' => $pluginDir. 'Test' . DS . 'Fixture' . DS . $this->singularName . 'Fixture.php',
 					'override' => $this->override,
