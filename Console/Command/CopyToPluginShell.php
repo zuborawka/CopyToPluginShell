@@ -31,9 +31,9 @@ class CopyToPluginShell extends AppShell
 
 	public $pluginName = null;
 
-	public $pluginDir = null;
+	public $pluginUnderscoredName = null;
 
-	public $appName = null;
+	public $pluginDir = null;
 
 	public $toCore = false;
 
@@ -46,6 +46,8 @@ class CopyToPluginShell extends AppShell
 	public $backupExt = '.BAK';
 
 	public $override = false;
+
+	public $fileClass = 'File'; // For creating test case, you may change file control class.
 
 	public function main()
 	{
@@ -65,6 +67,8 @@ class CopyToPluginShell extends AppShell
 			Inflector::pluralize($this->singularName);
 		$this->pluginName =
 			Inflector::camelize($this->_getMatchedArg('Plugin Name', '/^[a-zA-Z][_ a-zA-Z0-9]*$/'));
+		$this->pluginUnderscoredName =
+			Inflector::underscore($this->pluginName);
 		$this->toCore =
 			strtoupper($this->_getMatchedArg('To Core ? [Y]es or [N]o', '/^[NY]$/i', array('N', 'Y'), 'N')) === 'Y';
 		$this->override =
@@ -206,9 +210,11 @@ class CopyToPluginShell extends AppShell
 
 	public function _move()
 	{
+		$fileClass = $this->fileClass;
+
 		foreach ($this->targetFiles as $k => $settings) {
 			$this->out("\n[" . $k . ']');
-			$file = new File($settings['src']);
+			$file = new $fileClass($settings['src']);
 
 			// check existence
 			if (! $file->exists()) {
@@ -223,7 +229,7 @@ class CopyToPluginShell extends AppShell
 					continue;
 				}
 			} else {
-				new File($settings['create'], true);
+				new $fileClass($settings['create'], true);
 			}
 
 			if ( $file->copy($settings['create'])) {
@@ -233,10 +239,21 @@ class CopyToPluginShell extends AppShell
 				continue;
 			}
 
+			if ($refactored = $this->_refactor(file_get_contents($settings['create']), $k)) {
+				$fp = fopen($settings['create'], 'w');
+				if (fwrite($fp, $refactored)) {
+					$this->out('    refactor : success');
+				} else {
+					$this->out('    refactor : FAULT !');
+				}
+			} else {
+				$this->out('    refactor : skipped...');
+			}
+
 			// backup
 			if ($settings['backup']) {
 				if (!file_exists($settings['backupPath'])) {
-					new File($settings['backupPath'], true);
+					new $fileClass($settings['backupPath'], true);
 				}
 
 				if ($file->copy($settings['backupPath'])) {
@@ -259,6 +276,70 @@ class CopyToPluginShell extends AppShell
 
 			$this->out('  Whoooo! All are succeed !');
 		}
+	}
+
+	public function _refactor($data, $type)
+	{
+		switch ($type) {
+		    case 'Model':
+				$search = array(
+					'App::uses(\'AppModel\', \'Model\');',
+					'\'className\' => \'',
+					' extends AppModel {',
+				);
+				$replace = array(
+					'App::uses(\'' . $this->pluginName . 'AppModel\', \'' . $this->pluginName . '.Model\');',
+					'\'className\' => \'' . $this->pluginName . '.',
+					' extends ' . $this->pluginName . 'AppModel {',
+				);
+				$data = str_replace($search, $replace, $data);
+		        break;
+			case 'Controller':
+				$search = array(
+					'App::uses(\'AppController\', \'Controller\');',
+					'Controller extends AppController',
+				);
+				$replace = array(
+					'App::uses(\'' . $this->pluginName . 'AppController\', \'' . $this->pluginName . '.Controller\');',
+					'Controller extends ' . $this->pluginName . 'AppController',
+				);
+				$data = str_replace($search, $replace, $data);
+				break;
+			case 'View.add':
+			case 'View.edit':
+			case 'View.index':
+			case 'View.view':
+				$search = array(
+					', array(\'action\' => \'',
+					', array(\'controller\' => \'',
+				);
+				$replace = array(
+					', array(\'plugin\' => \'' . $this->pluginUnderscoredName . '\', \'action\' => \'',
+					', array(\'plugin\' => \'' . $this->pluginUnderscoredName . '\', \'controller\' => \'',
+				);
+				$data = str_replace($search, $replace, $data);
+				break;
+			case 'TestModel':
+			case 'TestController':
+				$search = array(
+					'Controller\', \'Controller\');',
+					'\', \'Model\');',
+					'\'app.',
+				);
+				$replace = array(
+					'Controller\', \'' . $this->pluginName . '.Controller\');',
+					'\', \'' . $this->pluginName . '.Model\');',
+					'\'plugin.' . $this->pluginUnderscoredName . '.',
+				);
+				$data = str_replace($search, $replace, $data);
+				break;
+			case 'TestFixture':
+				break;
+			default:
+		        break;
+		}
+
+		return $data;
 	}
 
 }
