@@ -12,21 +12,21 @@
  * ファイルI/O のみテスト済み
  *
  * 使い方
- * 		1 : Console/cake bake all などで、普通にファイルを bake する
- *		2 : Console/cake CopyToPluginShell.CopyToPlugin でこのシェルを呼び出す
- *		3 : パラメータを色々聞いてくるので適当に入力して下さい。パラメータは以下のようなものがあります
- *          Model Name (singular)
- *              モデルの名前を通常のやり方（単数形キャメルケース）で入力
- *          Plugin Name
- *              コピー先のプラグイン名を入力
- *          To Core ?
- *              コアのプラグインか（"N" の場合、アプリケーションのプラグインにコピーされる）
- *          Override If Exists ?
- *              コピー先に同名ファイルがある場合に上書きするか？
- *          Remove Original ?
- *              コピー元のデータを削除するか？
- *          Create Backup ?
- *              コピー元のデータのバックアップを作成するか？（Remove Original が有効の場合のみのオプション） *
+ *  1 : Console/cake bake all などで、普通にファイルを bake する
+ *  2 : Console/cake CopyToPluginShell.CopyToPlugin でこのシェルを呼び出す
+ *  3 : パラメータを色々聞いてくるので適当に入力して下さい。パラメータは以下のようなものがあります
+ *      Model Name (singular) :
+ *          モデルの名前を通常のやり方（単数形キャメルケース）で入力
+ *      Plugin Name :
+ *          コピー先のプラグイン名を入力
+ *      To Core ? :
+ *          コアのプラグインか（"N" の場合、アプリケーションのプラグインにコピーされる）
+ *      Override If Exists ? :
+ *          コピー先に同名ファイルがある場合に上書きするか？
+ *      Remove Original ? :
+ *          コピー元のデータを削除するか？
+ *      Create Backup ? :
+ *          コピー元のデータのバックアップを作成するか？（Remove Original が有効の場合のみのオプション） *
  */
 
 
