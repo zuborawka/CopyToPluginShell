@@ -5,15 +5,28 @@
  *
  * プラグインを作成するときに、アプリケーションでベイクしたファイルをごっそりコピーする、そんなシェルです。
  * 本当は、ベイクするときにプラグイン用のファイルをプラグインディレクトリに作成出来ればいいんですが、ベイク関連のカスタマイズが上手く行かなかったので苦肉の策です。
+ * （後日、 plugin コマンドがあるのを見つけたのですが、上手く動いてくれない）
  * ファイルの内容は可能な限りプラグインの空間にリプレイスしています。
  * 従って、依存している他のモデルやフィクスチャで同じプラグインに含まれていないものは生成後に手動で書きなおす必要があります。
  *
- * テストは書いてない。 (´・ω・`)
+ * ファイルI/O のみテスト済み
  *
  * 使い方
  * 		1 : Console/cake bake all などで、普通にファイルを bake する
  *		2 : Console/cake CopyToPluginShell.CopyToPlugin でこのシェルを呼び出す
- *		3 : パラメータを色々聞いてくるので適当に入力して下さい。以上
+ *		3 : パラメータを色々聞いてくるので適当に入力して下さい。パラメータは以下のようなものがあります
+ *          Model Name (singular)
+ *              モデルの名前を通常のやり方（単数形キャメルケース）で入力
+ *          Plugin Name
+ *              コピー先のプラグイン名を入力
+ *          To Core ?
+ *              コアのプラグインか（"N" の場合、アプリケーションのプラグインにコピーされる）
+ *          Override If Exists ?
+ *              コピー先に同名ファイルがある場合に上書きするか？
+ *          Remove Original ?
+ *              コピー元のデータを削除するか？
+ *          Create Backup ?
+ *              コピー元のデータのバックアップを作成するか？（Remove Original が有効の場合のみのオプション） *
  */
 
 
@@ -321,6 +334,9 @@ class CopyToPluginShell extends AppShell
 				$data = str_replace($search, $replace, $data);
 				break;
 			case 'TestModel':
+				$search = array('ClassRegistry::init(\'');
+				$replace = array('ClassRegistry::init(\'' . $this->pluginName . '.');
+				$data = str_replace($search, $replace, $data);
 			case 'TestController':
 				$search = array(
 					'Controller\', \'Controller\');',
